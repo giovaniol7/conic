@@ -16,7 +16,7 @@ class TelaLogin extends StatefulWidget {
 class _TelaLoginState extends State<TelaLogin> {
   TextEditingController txtEmail = TextEditingController();
   TextEditingController txtSenha = TextEditingController();
-  Cliente c = Cliente(null, "", "", "", "", "");
+  //Cliente c = Cliente(null, "", "", "", "", "");
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +57,8 @@ class _TelaLoginState extends State<TelaLogin> {
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     onPressed: () {
-                      ClienteRepositorio CR = new ClienteRepositorio();
-                      c = CR.recuperarClienteLogin(txtEmail.text, txtSenha.text) as Cliente;
+                      //ClienteRepositorio CR = new ClienteRepositorio();
+                      //c = CR.recuperarClienteLogin(txtEmail.text, txtSenha.text) as Cliente;
                     },
                   ),
                 ),

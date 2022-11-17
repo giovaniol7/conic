@@ -49,7 +49,7 @@ class _TelaCadastroDispositivoState extends State<TelaCadastroDispositivo> {
                       child: const Text('Criar'),
                       onPressed: () {
                         DispositivoRepositorio DR = new DispositivoRepositorio();
-                        DR.Post(IdCliente, txtNome.text, txtMAC.text);
+                        //DR.Post(IdCliente, txtNome.text, txtMAC.text);
                       },
                     ),
                   ),

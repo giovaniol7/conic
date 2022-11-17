@@ -1,25 +1,22 @@
 import 'dart:convert';
 
-List<Dispositivo> userModelFromJson(String str) =>
-    List<Dispositivo>.from(json.decode(str).map((x) => Dispositivo.fromJson(x)));
-
 class Dispositivo{
 
   int? id;
-  int idCliente;
-  String nome;
-  String mac;
-  int lock;
+  int? idCliente;
+  int? lock;
+  String? mac;
+  String? nome;
 
-  Dispositivo({required this.id, required this.idCliente, required this.nome, required this.mac, required this.lock});
+  Dispositivo({this.id, this.idCliente, this.nome, this.mac, this.lock});
 
-  factory Dispositivo.fromJson(Map<String, dynamic> json) => Dispositivo(
-    id: json["id"],
-    idCliente: json["idCliente"],
-    nome: json["nome"],
-    mac: json["mac"],
-    lock: json["lock"],
-  );
+  Dispositivo.fromJson(Map<String, dynamic> json){
+    id: json["id"];
+    idCliente: json["idCliente"];
+    nome: json["nome"];
+    mac: json["mac"];
+    lock: json["lock"];
+  }
 
   Map<String, dynamic> toJson(){
     return {
@@ -36,22 +33,22 @@ class Dispositivo{
     id = value;
   }
 
-  int get getIdCliente => idCliente;
+  int? get getIdCliente => idCliente;
   set setIdCliente(int value) {
     idCliente = value;
   }
 
-  String get getNome => nome;
+  String? get getNome => nome;
   set setNome(String value) {
     nome = value;
   }
 
-  String get getMac => mac;
+  String? get getMac => mac;
   set setMac(String value) {
     mac = value;
   }
 
-  int get getLock => lock;
+  int? get getLock => lock;
   set setLock(int value) {
     lock = value;
   }

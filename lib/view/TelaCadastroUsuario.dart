@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:conic/widgets/campoTexto.dart';
 import '../widgets/mensagem.dart';
 import 'package:http/http.dart' as http;
-import 'package:sqflite/sqflite.dart';
 
 class TelaCadastroUsuario extends StatefulWidget {
   const TelaCadastroUsuario({Key? key}) : super(key: key);
@@ -28,8 +27,8 @@ class _TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
       if(txtSenha.text != txtSenhaCofirmar.text){
         erro(context, 'Senhas não coincidem.');
       }else{
-        ClienteRepositorio CR = new ClienteRepositorio();
-        CR.Post(txtNome.text, txtEmail.text, txtSenha.text, txtTelefone.text, txtTelefoneSecundario.text);
+        //ClienteRepositorio CR = new ClienteRepositorio();
+        //CR.Post(txtNome.text, txtEmail.text, txtSenha.text, txtTelefone.text, txtTelefoneSecundario.text);
       }
     }
 

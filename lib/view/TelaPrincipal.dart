@@ -18,7 +18,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
   List<Widget> widgetList = [];
   DispositivoRepositorio dispositivoRepositorio = new DispositivoRepositorio();
 
-  late List<Dispositivo>? dispositivoModel = [];
+  /*late List<Dispositivo>? dispositivoModel = [];
   @override
   void initState() {
     super.initState();
@@ -29,7 +29,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
     dispositivoModel =
         (await dispositivoRepositorio.recuperarDispositivoCliente())!;
     Future.delayed(const Duration(seconds: 1)).then((value) => setState(() {}));
-  }
+  }*/
 
   _escolhaMenuItem(String itemEscolhido) {
     switch (itemEscolhido) {
@@ -72,37 +72,26 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           ],
         ),
         body: Expanded(
-          child: dispositivoModel == null || dispositivoModel!.isEmpty
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : ListView.builder(
-                  itemCount: dispositivoModel!.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(dispositivoModel![index].id.toString()),
-                              Text(dispositivoModel![index].nome),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20.0,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(dispositivoModel![index].mac),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+          child: FutureBuilder<List<Dispositivo>>(
+            future: dispositivoRepositorio.recuperarDispositivo(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      var lista = snapshot.data;
+                      Dispositivo dispositivo = lista![index];
+                      return ListTile(
+                        title: Text(dispositivo.nome!),
+                        subtitle: Text(dispositivo.mac!),
+                      );
+                    });
+              } else if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
+              }
+              return const CircularProgressIndicator();
+            },
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.blue,
