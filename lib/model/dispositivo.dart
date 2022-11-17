@@ -1,3 +1,8 @@
+import 'dart:convert';
+
+List<Dispositivo> userModelFromJson(String str) =>
+    List<Dispositivo>.from(json.decode(str).map((x) => Dispositivo.fromJson(x)));
+
 class Dispositivo{
 
   int? id;
@@ -6,9 +11,17 @@ class Dispositivo{
   String mac;
   int lock;
 
-  Dispositivo(this.id, this.idCliente, this.nome, this.mac, this.lock);
+  Dispositivo({required this.id, required this.idCliente, required this.nome, required this.mac, required this.lock});
 
-  Map toJson(){
+  factory Dispositivo.fromJson(Map<String, dynamic> json) => Dispositivo(
+    id: json["id"],
+    idCliente: json["idCliente"],
+    nome: json["nome"],
+    mac: json["mac"],
+    lock: json["lock"],
+  );
+
+  Map<String, dynamic> toJson(){
     return {
       "id": this.id,
       "idCliente": this.idCliente,

@@ -31,7 +31,7 @@ class _HomeState extends State<Home> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Papelaria Nota Fiscal',
-      initialRoute: '/principal', token == null || token == '' ? '/login' : '/principal',
+      initialRoute: '/principal', //token == null || token == '' ? '/login' : '/principal',
       routes: {
         '/principal': (context) => const TelaPrincipal(),
         '/login': (context) => const TelaLogin(),
