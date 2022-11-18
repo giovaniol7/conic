@@ -18,19 +18,6 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
   List<Widget> widgetList = [];
   DispositivoRepositorio dispositivoRepositorio = new DispositivoRepositorio();
 
-  /*late List<Dispositivo>? dispositivoModel = [];
-  @override
-  void initState() {
-    super.initState();
-    _getData();
-  }
-
-  void _getData() async {
-    dispositivoModel =
-        (await dispositivoRepositorio.recuperarDispositivoCliente())!;
-    Future.delayed(const Duration(seconds: 1)).then((value) => setState(() {}));
-  }*/
-
   _escolhaMenuItem(String itemEscolhido) {
     switch (itemEscolhido) {
       case "Editar Perfil":
@@ -71,10 +58,9 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
             )
           ],
         ),
-        body: Expanded(
-          child: FutureBuilder<List<Dispositivo>>(
+        body: FutureBuilder<List<dynamic>>(
             future: dispositivoRepositorio.recuperarDispositivo(),
-            builder: (context, snapshot) {
+            builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
                     itemCount: snapshot.data!.length,
@@ -92,7 +78,6 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
               return const CircularProgressIndicator();
             },
           ),
-        ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.blue,
           foregroundColor: Colors.black,

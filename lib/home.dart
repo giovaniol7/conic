@@ -20,18 +20,11 @@ class _HomeState extends State<Home> {
 
   }
 
-  /*@override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    verificar();
-  }*/
-
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Papelaria Nota Fiscal',
-      initialRoute: '/principal', //token == null || token == '' ? '/login' : '/principal',
+      initialRoute: '/login', //token == null || token == '' ? '/login' : '/principal',
       routes: {
         '/principal': (context) => const TelaPrincipal(),
         '/login': (context) => const TelaLogin(),

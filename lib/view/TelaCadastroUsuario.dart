@@ -27,8 +27,9 @@ class _TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
       if(txtSenha.text != txtSenhaCofirmar.text){
         erro(context, 'Senhas não coincidem.');
       }else{
-        //ClienteRepositorio CR = new ClienteRepositorio();
-        //CR.Post(txtNome.text, txtEmail.text, txtSenha.text, txtTelefone.text, txtTelefoneSecundario.text);
+        ClienteRepositorio CR = new ClienteRepositorio();
+        CR.Post(txtNome.text, txtEmail.text, txtSenha.text, txtTelefone.text, txtTelefoneSecundario.text);
+        sucesso(context, 'Usuário cadastrado.');
       }
     }
 
@@ -71,7 +72,7 @@ class _TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
                         child: const Text('Criar'),
                         onPressed: () {
                           verificarSenhas();
-                          //criarConta(txtNome.text, txtEmail.text, txtTelefone.text, txtSenha.text);
+                          Navigator.pop(context);
                         },
                       ),
                     ),

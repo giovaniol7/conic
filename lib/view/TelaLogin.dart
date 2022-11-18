@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:ffi';
+
 import 'package:conic/model/cliente.dart';
 import 'package:conic/repositorio/cliente_repositorio.dart';
 import 'package:conic/view/TelaCadastroUsuario.dart';
+import 'package:conic/view/TelaPrincipal.dart';
 import 'package:flutter/material.dart';
 import 'package:conic/widgets/campoTexto.dart';
 import 'package:http/http.dart' as http;
@@ -16,7 +20,7 @@ class TelaLogin extends StatefulWidget {
 class _TelaLoginState extends State<TelaLogin> {
   TextEditingController txtEmail = TextEditingController();
   TextEditingController txtSenha = TextEditingController();
-  //Cliente c = Cliente(null, "", "", "", "", "");
+  var id;
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +31,7 @@ class _TelaLoginState extends State<TelaLogin> {
         backgroundColor: Colors.grey.shade300,
       ),
       body: Container(
-        decoration: BoxDecoration(
-            color: Colors.grey.shade100
-        ),
+        decoration: BoxDecoration(color: Colors.grey.shade100),
         padding: EdgeInsets.all(16),
         child: Center(
           child: SingleChildScrollView(
@@ -57,8 +59,7 @@ class _TelaLoginState extends State<TelaLogin> {
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     onPressed: () {
-                      //ClienteRepositorio CR = new ClienteRepositorio();
-                      //c = CR.recuperarClienteLogin(txtEmail.text, txtSenha.text) as Cliente;
+                      recuperarClienteLo();
                     },
                   ),
                 ),
@@ -66,17 +67,13 @@ class _TelaLoginState extends State<TelaLogin> {
                   child: GestureDetector(
                     child: Text(
                       "Não tem conta? Cadastre-se!",
-                      style: TextStyle(
-                          color: Colors.black
-                      ),
+                      style: TextStyle(color: Colors.black),
                     ),
-                    onTap:  (){
+                    onTap: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => TelaCadastroUsuario()
-                          )
-                      );
+                              builder: (context) => TelaCadastroUsuario()));
                     },
                   ),
                 ),
@@ -88,7 +85,17 @@ class _TelaLoginState extends State<TelaLogin> {
     );
   }
 
-  void saveValor() async {
+  Future<bool> recuperarClienteLo() async {
+    ClienteRepositorio CR = ClienteRepositorio();
+    var lista = CR.recuperarCliente();
 
-  }
+    /*for ()
+    if (response.statusCode == 200) {
+      print(jsonDecode(response.body)['id']);
+      return true;
+    } else {
+      print(jsonDecode(response.body));
+      return false;
+    }
+  }*/
 }
