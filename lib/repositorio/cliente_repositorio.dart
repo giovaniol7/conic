@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:conic/model/cliente.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
 
 class ClienteRepositorio {
 
@@ -16,6 +14,40 @@ class ClienteRepositorio {
       return dadosJson.map((json) => Cliente.fromJson(json)).toList();
     } else {
       throw Exception('Erro não foi possivel carregar usuarios');
+    }
+  }
+
+  Future<Cliente> recuperarClienteLogin(email, senha) async {
+    http.Response response = await http.get(Uri.parse("$urlBase/cliente/${email}/${senha}"));
+    var dadosJson = json.decode(response.body);
+    Cliente c = Cliente(null, '', '', '', '', '');
+    if (response.statusCode == 200) {
+      c.email = dadosJson["email"];
+      c.senha = dadosJson["senha"];
+      c.id = dadosJson["id"];
+      c.nome = dadosJson["nome"];
+      c.telefone1 = dadosJson["telefone1"];
+      c.telefone2 = dadosJson["telefone2"];
+      return c;
+    } else {
+      throw Exception('Erro não foi possivel carregar usuario');
+    }
+  }
+
+  Future<Cliente> recuperarClienteId(id) async {
+    http.Response response = await http.get(Uri.parse("$urlBase/cliente/${id}"));
+    var dadosJson = json.decode(response.body);
+    Cliente c = Cliente(null, '', '', '', '', '');
+    if (response.statusCode == 200) {
+      c.email = dadosJson["email"];
+      c.senha = dadosJson["senha"];
+      c.id = dadosJson["id"];
+      c.nome = dadosJson["nome"];
+      c.telefone1 = dadosJson["telefone1"];
+      c.telefone2 = dadosJson["telefone2"];
+      return c;
+    } else {
+      throw Exception('Erro não foi possivel carregar usuario');
     }
   }
 

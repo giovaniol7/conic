@@ -26,11 +26,10 @@ class _HomeState extends State<Home> {
       title: 'Papelaria Nota Fiscal',
       initialRoute: '/login', //token == null || token == '' ? '/login' : '/principal',
       routes: {
-        '/principal': (context) => const TelaPrincipal(),
+        '/principal': (context) => const TelaPrincipal(id: null),
         '/login': (context) => const TelaLogin(),
         '/usuario': (context) => const TelaCadastroUsuario(),
-        '/dispositivo': (context) => const TelaCadastroDispositivo(),
-        '/perfil': (context) => const TelaPerfil(),
+        '/dispositivo': (context) => const TelaCadastroDispositivo(id: null),
       },
     );
   }

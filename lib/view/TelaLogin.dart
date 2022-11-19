@@ -1,13 +1,9 @@
-import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:conic/model/cliente.dart';
 import 'package:conic/repositorio/cliente_repositorio.dart';
 import 'package:conic/view/TelaCadastroUsuario.dart';
 import 'package:conic/view/TelaPrincipal.dart';
 import 'package:flutter/material.dart';
 import 'package:conic/widgets/campoTexto.dart';
-import 'package:http/http.dart' as http;
 import '../widgets/mensagem.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -59,7 +55,7 @@ class _TelaLoginState extends State<TelaLogin> {
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     onPressed: () {
-                      recuperarClienteLo();
+                      recuperarClienteLo(txtEmail.text, txtSenha.text);
                     },
                   ),
                 ),
@@ -85,17 +81,16 @@ class _TelaLoginState extends State<TelaLogin> {
     );
   }
 
-  Future<bool> recuperarClienteLo() async {
+  recuperarClienteLo(email, senha) async {
     ClienteRepositorio CR = ClienteRepositorio();
-    var lista = CR.recuperarCliente();
-
-    /*for ()
-    if (response.statusCode == 200) {
-      print(jsonDecode(response.body)['id']);
-      return true;
+    Cliente c = await CR.recuperarClienteLogin(email, senha);
+    if (c.email == email && c.senha == senha) {
+      var id = c.id;
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => TelaPrincipal(id: c.id)));
+      sucesso(context, "Usuário autenticado");
     } else {
-      print(jsonDecode(response.body));
-      return false;
+      erro(context, "Email e Senha inválidos.");
     }
-  }*/
+  }
 }

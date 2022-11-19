@@ -7,16 +7,23 @@ import 'package:conic/widgets/mensagem.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TelaPrincipal extends StatefulWidget {
-  const TelaPrincipal({Key? key}) : super(key: key);
-
+  final int? id;
+  const TelaPrincipal({Key? key, required this.id}) : super(key: key);
   @override
   State<TelaPrincipal> createState() => _TelaPrincipalState();
 }
 
 class _TelaPrincipalState extends State<TelaPrincipal> {
+  var dis;
   List<String> itensMenu = ["Editar Perfil", "Deslogar"];
   List<Widget> widgetList = [];
   DispositivoRepositorio dispositivoRepositorio = new DispositivoRepositorio();
+
+  @override
+  void initState() {
+    super.initState();
+    dis = dispositivoRepositorio.recuperarDispositivo(widget.id);
+  }
 
   _escolhaMenuItem(String itemEscolhido) {
     switch (itemEscolhido) {
@@ -59,34 +66,35 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           ],
         ),
         body: FutureBuilder<List<dynamic>>(
-            future: dispositivoRepositorio.recuperarDispositivo(),
-            builder: (context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                return ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      var lista = snapshot.data;
-                      Dispositivo dispositivo = lista![index];
-                      return ListTile(
-                        title: Text(dispositivo.nome!),
-                        subtitle: Text(dispositivo.mac!),
-                      );
-                    });
-              } else if (snapshot.hasError) {
-                return Text(snapshot.error.toString());
-              }
-              return const CircularProgressIndicator();
-            },
-          ),
+          future: dis,
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                  itemCount: snapshot.data?.length,
+                  itemBuilder: (context, index) {
+                    var lista = snapshot.data;
+                    Dispositivo dispositivo = lista![index];
+                    print(dispositivo.id);
+                    return ListTile(
+                      title: Text(dispositivo.nome!),
+                      subtitle: Text(dispositivo.mac!),
+                    );
+                  });
+            } else if (snapshot.hasError) {
+              return Text(snapshot.error.toString());
+            }
+            return const CircularProgressIndicator();
+          },
+        ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.blue,
           foregroundColor: Colors.black,
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
           onPressed: () {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => TelaCadastroDispositivo(),
+                  builder: (context) => TelaCadastroDispositivo(id: widget.id),
                 ));
           },
         ),

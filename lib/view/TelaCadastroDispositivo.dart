@@ -1,11 +1,13 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:conic/repositorio/dispositivo_repositorio.dart';
 import 'package:conic/widgets/campoTexto.dart';
+import 'package:conic/widgets/mensagem.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TelaCadastroDispositivo extends StatefulWidget {
-  const TelaCadastroDispositivo({Key? key}) : super(key: key);
+  final int? id;
+  const TelaCadastroDispositivo({Key? key, required this.id}) : super(key: key);
 
   @override
   State<TelaCadastroDispositivo> createState() => _TelaCadastroDispositivoState();
@@ -49,7 +51,9 @@ class _TelaCadastroDispositivoState extends State<TelaCadastroDispositivo> {
                       child: const Text('Criar'),
                       onPressed: () {
                         DispositivoRepositorio DR = new DispositivoRepositorio();
-                        DR.Post(IdCliente, txtNome.text, txtMAC.text);
+                        DR.Post(widget.id, txtNome.text, txtMAC.text);
+                        sucesso(context, 'Usuário cadastrado.');
+                        Navigator.pop(context);
                       },
                     ),
                   ),
