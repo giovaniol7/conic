@@ -14,16 +14,9 @@ class TelaPrincipal extends StatefulWidget {
 }
 
 class _TelaPrincipalState extends State<TelaPrincipal> {
-  var dis;
   List<String> itensMenu = ["Editar Perfil", "Deslogar"];
   List<Widget> widgetList = [];
   DispositivoRepositorio dispositivoRepositorio = new DispositivoRepositorio();
-
-  @override
-  void initState() {
-    super.initState();
-    dis = dispositivoRepositorio.recuperarDispositivo(widget.id);
-  }
 
   _escolhaMenuItem(String itemEscolhido) {
     switch (itemEscolhido) {
@@ -31,7 +24,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         return Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => TelaPerfil(),
+              builder: (context) => TelaPerfil(id: widget.id),
             ));
         break;
       case "Deslogar":
@@ -66,7 +59,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           ],
         ),
         body: FutureBuilder<List<dynamic>>(
-          future: dis,
+          future: dispositivoRepositorio.recuperarDispositivo(widget.id),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               return ListView.builder(
@@ -74,7 +67,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                   itemBuilder: (context, index) {
                     var lista = snapshot.data;
                     Dispositivo dispositivo = lista![index];
-                    print(dispositivo.id);
+                    print(index);
                     return ListTile(
                       title: Text(dispositivo.nome!),
                       subtitle: Text(dispositivo.mac!),
@@ -83,7 +76,9 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
             } else if (snapshot.hasError) {
               return Text(snapshot.error.toString());
             }
-            return const CircularProgressIndicator();
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           },
         ),
         floatingActionButton: FloatingActionButton(

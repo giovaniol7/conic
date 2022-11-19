@@ -1,4 +1,6 @@
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:conic/model/cliente.dart';
+import 'package:conic/repositorio/cliente_repositorio.dart';
 import 'package:conic/widgets/campoTexto.dart';
 import 'package:flutter/material.dart';
 import 'package:conic/widgets/mensagem.dart';
@@ -6,7 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TelaPerfil extends StatefulWidget {
-  const TelaPerfil({Key? key}) : super(key: key);
+  final int? id;
+  const TelaPerfil({Key? key, required this.id}) : super(key: key);
 
   @override
   State<TelaPerfil> createState() => _TelaPerfilState();
@@ -24,13 +27,16 @@ class _TelaPerfilState extends State<TelaPerfil> {
     if(txtSenha.text != txtSenhaCofirmar.text){
       erro(context, 'Senhas não coincidem.');
     }else{
-      //criarConta(txtNome.text, txtEmail.text, txtTelefone.text, txtSenha.text);
+      ClienteRepositorio CR = new ClienteRepositorio();
+      CR.Post(txtNome.text, txtEmail.text, txtSenha.text, txtTelefone.text, txtTelefoneSecundario.text);
+      sucesso(context, 'Usuário cadastrado.');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+      recuperarClienteID(widget.id);
+      return Scaffold(
       appBar: AppBar(
         title: Text("Cadastro", style: TextStyle(color: Colors.black),),
         backgroundColor: Colors.grey.shade300,
@@ -69,7 +75,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                       child: const Text('Criar'),
                       onPressed: () {
                         verificarSenhas();
-                        //criarConta(txtNome.text, txtEmail.text, txtTelefone.text, txtSenha.text);
+                        Navigator.pop(context);
                       },
                     ),
                   ),
@@ -95,5 +101,15 @@ class _TelaPerfilState extends State<TelaPerfil> {
         ),
       ),
     );
+  }
+
+  recuperarClienteID(idd) async {
+    ClienteRepositorio CR = ClienteRepositorio();
+    Cliente c = await CR.recuperarClienteId(idd);
+    var id = c.id;
+    txtNome.text = c.nome!;
+    txtEmail.text = c.email!;
+    txtTelefone.text = c.telefone1!;
+    txtTelefoneSecundario.text = c.telefone2!;
   }
 }

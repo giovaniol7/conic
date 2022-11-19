@@ -15,6 +15,22 @@ class DispositivoRepositorio {
     }
   }
 
+  Future<Dispositivo> recuperarDispositivoMAC(id) async {
+    http.Response response = await http.get(Uri.parse("$urlBase/device/${id}"));
+    var dadosJson = json.decode(response.body);
+    Dispositivo d = Dispositivo(null, null, '', '', 0);
+    if (response.statusCode == 200) {
+      d.id = dadosJson["id"];
+      d.idCliente = dadosJson["idCliente"];
+      d.nome = dadosJson["nome"];
+      d.mac = dadosJson["mac"];
+      d.lock = dadosJson["lock"];
+      return d;
+    } else {
+      throw Exception('Erro não foi possivel carregar usuario');
+    }
+  }
+
   Post(idCli, nome, mac) async {
     Dispositivo d = Dispositivo (null, idCli, nome, mac, 0);
     var corpo = json.encode(
