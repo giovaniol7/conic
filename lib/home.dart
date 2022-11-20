@@ -23,13 +23,11 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Papelaria Nota Fiscal',
+      title: 'Sensor de Gás',
       initialRoute: '/login', //token == null || token == '' ? '/login' : '/principal',
       routes: {
-        '/principal': (context) => const TelaPrincipal(id: null),
         '/login': (context) => const TelaLogin(),
         '/usuario': (context) => const TelaCadastroUsuario(),
-        '/dispositivo': (context) => const TelaCadastroDispositivo(id: null),
       },
     );
   }

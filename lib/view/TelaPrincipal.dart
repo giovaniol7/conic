@@ -59,19 +59,16 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           ],
         ),
         body: FutureBuilder<List<dynamic>>(
-          future: dispositivoRepositorio.recuperarDispositivo(widget.id),
+          future: dispositivoRepositorio.recuperarDispositivo(widget.id!),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               return ListView.builder(
-                  itemCount: snapshot.data?.length,
+                  itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     var lista = snapshot.data;
+                    //print(lista[index]["id"]);
                     Dispositivo dispositivo = lista![index];
-                    print(index);
-                    return ListTile(
-                      title: Text(dispositivo.nome!),
-                      subtitle: Text(dispositivo.mac!),
-                    );
+                    return dismiss(dispositivo);
                   });
             } else if (snapshot.hasError) {
               return Text(snapshot.error.toString());

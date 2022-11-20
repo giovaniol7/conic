@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 class DispositivoRepositorio {
   String urlBase = "https://gas-sensor-api.herokuapp.com/api";
 
-  Future<List> recuperarDispositivo(id) async {
-    http.Response response = await http.get(Uri.parse("$urlBase/device/${id}"));
+  Future<List> recuperarDispositivo(int id) async {
+    http.Response response = await http.get(Uri.parse("$urlBase/device/$id"));
     if (response.statusCode == 200) {
       var dadosJson = json.decode(response.body);
       return dadosJson.map((json) => Dispositivo.fromJson(json)).toList();
@@ -18,7 +18,7 @@ class DispositivoRepositorio {
   Future<Dispositivo> recuperarDispositivoMAC(id) async {
     http.Response response = await http.get(Uri.parse("$urlBase/device/${id}"));
     var dadosJson = json.decode(response.body);
-    Dispositivo d = Dispositivo(null, null, '', '', 0);
+    Dispositivo d = Dispositivo(id: null, idCliente: null, nome: '', mac: '', lock: 0);
     if (response.statusCode == 200) {
       d.id = dadosJson["id"];
       d.idCliente = dadosJson["idCliente"];
@@ -32,7 +32,7 @@ class DispositivoRepositorio {
   }
 
   Post(idCli, nome, mac) async {
-    Dispositivo d = Dispositivo (null, idCli, nome, mac, 0);
+    Dispositivo d = Dispositivo(id: null, idCliente: null, nome: '', mac: '', lock: 0);
     var corpo = json.encode(
         d.toJson()
     );
@@ -48,7 +48,7 @@ class DispositivoRepositorio {
   }
 
   Put(idCli, nome, mac) async {
-    Dispositivo d = new Dispositivo(null, idCli, nome, mac, 0);
+    Dispositivo d = Dispositivo(id: null, idCliente: null, nome: '', mac: '', lock: 0);
 
     var corpo = json.encode(d.toJson());
 

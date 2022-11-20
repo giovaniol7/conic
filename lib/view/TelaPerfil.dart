@@ -23,19 +23,29 @@ class _TelaPerfilState extends State<TelaPerfil> {
   var txtTelefoneSecundario = TextEditingController();
   var txtSenhaCofirmar = TextEditingController();
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    recuperarClienteID(widget.id);
+  }
+
   void verificarSenhas(){
-    if(txtSenha.text != txtSenhaCofirmar.text){
-      erro(context, 'Senhas não coincidem.');
+    if(txtSenha.text.isEmpty) {
+      if(txtSenha.text != txtSenhaCofirmar.text){
+        erro(context, 'Senhas não coincidem.');
+      }else{
+        ClienteRepositorio CR = new ClienteRepositorio();
+        CR.Post(txtNome.text, txtEmail.text, txtSenha.text, txtTelefone.text, txtTelefoneSecundario.text);
+        sucesso(context, 'Usuário cadastrado.');
+      }
     }else{
-      ClienteRepositorio CR = new ClienteRepositorio();
-      CR.Post(txtNome.text, txtEmail.text, txtSenha.text, txtTelefone.text, txtTelefoneSecundario.text);
-      sucesso(context, 'Usuário cadastrado.');
+      erro(context, 'Digite uma senha.');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-      recuperarClienteID(widget.id);
       return Scaffold(
       appBar: AppBar(
         title: Text("Cadastro", style: TextStyle(color: Colors.black),),
