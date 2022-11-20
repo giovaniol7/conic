@@ -66,7 +66,6 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     var lista = snapshot.data;
-                    //print(lista[index]["id"]);
                     Dispositivo dispositivo = lista![index];
                     return dismiss(dispositivo);
                   });
