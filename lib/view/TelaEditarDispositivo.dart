@@ -1,30 +1,39 @@
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:conic/model/dispositivo.dart';
 import 'package:conic/repositorio/dispositivo_repositorio.dart';
 import 'package:conic/view/TelaPrincipal.dart';
 import 'package:conic/widgets/campoTexto.dart';
 import 'package:conic/widgets/mensagem.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-class TelaCadastroDispositivo extends StatefulWidget {
+class TelaEditarDispositivo extends StatefulWidget {
   final int? id;
-  const TelaCadastroDispositivo({Key? key, required this.id}) : super(key: key);
+  final String? macc;
+  final int? idCliente;
+  const TelaEditarDispositivo({Key? key, required this.id, required this.macc, required this.idCliente}) : super(key: key);
 
   @override
-  State<TelaCadastroDispositivo> createState() => _TelaCadastroDispositivoState();
+  State<TelaEditarDispositivo> createState() => _TelaEditarDispositivoState();
 }
 
-class _TelaCadastroDispositivoState extends State<TelaCadastroDispositivo> {
+class _TelaEditarDispositivoState extends State<TelaEditarDispositivo> {
   var txtNome = TextEditingController();
   var txtMAC = TextEditingController();
   late int IdCliente;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    recuperarDispositivoID(widget.macc);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cadastro de Dispositivo", style: TextStyle(color: Colors.black),),
+        title: Text("Atualizar Dispositivo", style: TextStyle(color: Colors.black),),
         backgroundColor: Colors.grey.shade300,
       ),
       body: Container(
@@ -50,11 +59,11 @@ class _TelaCadastroDispositivoState extends State<TelaCadastroDispositivo> {
                         minimumSize: const Size(200, 45),
                         backgroundColor: Colors.blue,
                       ),
-                      child: const Text('Criar'),
+                      child: const Text('Atualizar'),
                       onPressed: () {
                         DispositivoRepositorio DR = new DispositivoRepositorio();
-                        DR.Post(widget.id, txtNome.text, txtMAC.text);
-                        sucesso(context, 'Usuário cadastrado.');
+                        DR.Put(widget.id, widget.idCliente, txtNome.text, txtMAC.text, 0);
+                        sucesso(context, 'Dispositivo atualizado.');
                         Navigator.pushReplacement(context,
                             MaterialPageRoute(builder: (context) => TelaPrincipal(id: widget.id)));
                       },
@@ -82,6 +91,14 @@ class _TelaCadastroDispositivoState extends State<TelaCadastroDispositivo> {
         ),
       ),
     );
+  }
+
+  recuperarDispositivoID(macc) async {
+    DispositivoRepositorio dispositivoRepositorio = DispositivoRepositorio();
+    Dispositivo c = await dispositivoRepositorio.recuperarDispositivoMAC(macc);
+    var id = c.id;
+    txtNome.text = c.nome!;
+    txtMAC.text = c.mac!;
   }
 }
 

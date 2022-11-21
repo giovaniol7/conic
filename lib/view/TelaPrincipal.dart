@@ -1,6 +1,7 @@
 import 'package:conic/model/dispositivo.dart';
 import 'package:conic/repositorio/dispositivo_repositorio.dart';
 import 'package:conic/view/TelaCadastroDispositivo.dart';
+import 'package:conic/view/TelaEditarDispositivo.dart';
 import 'package:conic/view/TelaPerfil.dart';
 import 'package:flutter/material.dart';
 import 'package:conic/widgets/mensagem.dart';
@@ -8,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class TelaPrincipal extends StatefulWidget {
   final int? id;
-  const TelaPrincipal({Key? key, required this.id}) : super(key: key);
+  const TelaPrincipal({Key? key, this.id}) : super(key: key);
   @override
   State<TelaPrincipal> createState() => _TelaPrincipalState();
 }
@@ -95,6 +96,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
 
   void deslogarUsuario() async {
     sucesso(context, 'O usuário deslogado!');
+    saveValor();
     Navigator.pushReplacementNamed(context, '/login');
   }
 
@@ -102,7 +104,12 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
     return Dismissible(
       key: Key(DateTime.now().microsecondsSinceEpoch.toString()),
       direction: DismissDirection.endToStart,
-      onDismissed: (e) {},
+      onDismissed: (e) {
+        dispositivoRepositorio.Delete(tabela.id);
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => TelaPrincipal(id: widget.id)));
+        sucesso(context, 'Dispositivo Apagado.');
+      },
       background: Container(
         color: Colors.red.shade500,
         padding: EdgeInsets.all(16),
@@ -128,11 +135,35 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           tabela.mac,
         ),
         trailing: IconButton(
-          icon: const Icon(Icons.lock_open),
-          onPressed: () {},
-        ),
-        onTap: () {},
+            icon: tabela.lock == 0 ? const Icon(Icons.lock_open) : const Icon(Icons.lock),
+            onPressed: () {
+              if (tabela.lock == 1){
+            dispositivoRepositorio.Put(tabela.id, tabela.idCliente, tabela.nome, tabela.mac, 0);
+            Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) => TelaPrincipal(id: widget.id)));
+            sucesso(context, 'Dispositivo Liberado.');
+          }else if (tabela.lock == 0){
+            dispositivoRepositorio.Put(tabela.id, tabela.idCliente, tabela.nome, tabela.mac, 1);
+            Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) => TelaPrincipal(id: widget.id)));
+            sucesso(context, 'Dispositivo Fechado.');
+          }
+            }),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TelaEditarDispositivo(
+                    id: widget.id, macc: tabela.mac, idCliente: widget.id),
+              ));
+        },
       ),
     );
+  }
+
+  void saveValor() async {
+    final tokenSave = await SharedPreferences.getInstance();
+    await tokenSave.setInt('aceite', 0);
+    print(tokenSave);
   }
 }

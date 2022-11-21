@@ -15,8 +15,8 @@ class DispositivoRepositorio {
     }
   }
 
-  Future<Dispositivo> recuperarDispositivoMAC(id) async {
-    http.Response response = await http.get(Uri.parse("$urlBase/device/${id}"));
+  Future<Dispositivo> recuperarDispositivoMAC(String MAC) async {
+    http.Response response = await http.get(Uri.parse("$urlBase/device/address/$MAC"));
     var dadosJson = json.decode(response.body);
     Dispositivo d = Dispositivo(id: null, idCliente: null, nome: '', mac: '', lock: 0);
     if (response.statusCode == 200) {
@@ -32,7 +32,7 @@ class DispositivoRepositorio {
   }
 
   Post(idCli, nome, mac) async {
-    Dispositivo d = Dispositivo(id: null, idCliente: null, nome: '', mac: '', lock: 0);
+    Dispositivo d = Dispositivo(id: null, idCliente: idCli, nome: nome, mac: mac, lock: 0);
     var corpo = json.encode(
         d.toJson()
     );
@@ -47,8 +47,8 @@ class DispositivoRepositorio {
     print("resposta: ${response.body}");
   }
 
-  Put(idCli, nome, mac) async {
-    Dispositivo d = Dispositivo(id: null, idCliente: null, nome: '', mac: '', lock: 0);
+  Put(id, idCli, nome, mac, lock) async {
+    Dispositivo d = Dispositivo(id: id, idCliente: idCli, nome: nome, mac: mac, lock: lock);
 
     var corpo = json.encode(d.toJson());
 
@@ -60,9 +60,9 @@ class DispositivoRepositorio {
     print("resposta: ${response.body}");
   }
 
-  Delete() async {
+  Delete(int id) async {
     http.Response response = await http.delete(
-      Uri.parse("$urlBase/device/"),
+      Uri.parse("$urlBase/device/$id"),
     );
 
     print("resposta: ${response.statusCode}");

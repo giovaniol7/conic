@@ -31,13 +31,14 @@ class _TelaPerfilState extends State<TelaPerfil> {
   }
 
   void verificarSenhas(){
-    if(txtSenha.text.isEmpty) {
+    if(txtSenha.text.isNotEmpty) {
       if(txtSenha.text != txtSenhaCofirmar.text){
         erro(context, 'Senhas não coincidem.');
       }else{
         ClienteRepositorio CR = new ClienteRepositorio();
-        CR.Post(txtNome.text, txtEmail.text, txtSenha.text, txtTelefone.text, txtTelefoneSecundario.text);
-        sucesso(context, 'Usuário cadastrado.');
+        CR.Put(widget.id, txtNome.text, txtEmail.text, txtSenha.text, txtTelefone.text, txtTelefoneSecundario.text);
+        sucesso(context, 'Usuário atualizado.');
+        Navigator.pop(context);
       }
     }else{
       erro(context, 'Digite uma senha.');
@@ -48,7 +49,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
   Widget build(BuildContext context) {
       return Scaffold(
       appBar: AppBar(
-        title: Text("Cadastro", style: TextStyle(color: Colors.black),),
+        title: Text("Atualizar Usuário", style: TextStyle(color: Colors.black),),
         backgroundColor: Colors.grey.shade300,
       ),
       body: Container(
@@ -85,7 +86,6 @@ class _TelaPerfilState extends State<TelaPerfil> {
                       child: const Text('Criar'),
                       onPressed: () {
                         verificarSenhas();
-                        Navigator.pop(context);
                       },
                     ),
                   ),

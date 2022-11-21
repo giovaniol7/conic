@@ -85,7 +85,9 @@ class _TelaLoginState extends State<TelaLogin> {
     ClienteRepositorio CR = ClienteRepositorio();
     Cliente c = await CR.recuperarClienteLogin(email, senha);
     if (c.email == email && c.senha == senha) {
-      var id = c.id;
+      print(c.id);
+      final tokenSave = await SharedPreferences.getInstance();
+      await tokenSave.setInt('aceite', c.id!);
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => TelaPrincipal(id: c.id)));
       sucesso(context, "Usuário autenticado");

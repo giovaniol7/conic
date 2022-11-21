@@ -45,6 +45,7 @@ dependencies:
   http: ^0.13.5
   flutter_launcher_icons: ^0.11.0
   flutter_native_splash: ^2.2.14
+  mask_text_input_formatter: ^2.4.0
 
 dev_dependencies:
   flutter_test:

@@ -1,9 +1,8 @@
-import 'package:conic/view/TelaCadastroDispositivo.dart';
-import 'package:conic/view/TelaPerfil.dart';
 import 'package:flutter/material.dart';
 import 'package:conic/view/TelaLogin.dart';
 import 'package:conic/view/TelaPrincipal.dart';
 import 'package:conic/view/TelaCadastroUsuario.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -15,18 +14,27 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   @override
-  String? token;
+  int? token;
   verificar () async {
+    final tokenSave = await SharedPreferences.getInstance();
+    token = tokenSave.getInt('aceite');
+  }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    verificar();
   }
 
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Sensor de Gás',
-      initialRoute: '/login', //token == null || token == '' ? '/login' : '/principal',
+      initialRoute: token == null || token == 0 ? '/login' : '/principal',
       routes: {
         '/login': (context) => const TelaLogin(),
+        '/principal': (context) => const TelaPrincipal(),
         '/usuario': (context) => const TelaCadastroUsuario(),
       },
     );
