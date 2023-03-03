@@ -3,7 +3,7 @@ import 'package:conic/model/dispositivo.dart';
 import 'package:http/http.dart' as http;
 
 class DispositivoRepositorio {
-  String urlBase = "https://gas-sensor-api.herokuapp.com/api";
+  String urlBase = "https://apigas.onrender.com/api";
 
   Future<List> recuperarDispositivo(int id) async {
     http.Response response = await http.get(Uri.parse("$urlBase/device/$id"));

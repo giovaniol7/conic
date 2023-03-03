@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class ClienteRepositorio {
 
-  String urlBase = "https://gas-sensor-api.herokuapp.com/api";
+  String urlBase = "https://apigas.onrender.com/api";
 
   Future<List> recuperarCliente() async {
     http.Response response = await http.get(Uri.parse("$urlBase/admin/cliente/"));
