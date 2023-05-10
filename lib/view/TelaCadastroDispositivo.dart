@@ -56,7 +56,7 @@ class _TelaCadastroDispositivoState extends State<TelaCadastroDispositivo> {
                         DR.Post(widget.id, txtNome.text, txtMAC.text);
                         sucesso(context, 'Usuário cadastrado.');
                         Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => TelaPrincipal(id: widget.id)));
+                            MaterialPageRoute(builder: (context) => TelaPrincipal(widget.id)));
                       },
                     ),
                   ),

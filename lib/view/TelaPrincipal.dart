@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:conic/model/dispositivo.dart';
 import 'package:conic/repositorio/dispositivo_repositorio.dart';
 import 'package:conic/view/TelaCadastroDispositivo.dart';
@@ -9,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class TelaPrincipal extends StatefulWidget {
   final int? id;
-  const TelaPrincipal({Key? key, this.id}) : super(key: key);
+  const TelaPrincipal( this.id, {Key? key,}) : super(key: key);
   @override
   State<TelaPrincipal> createState() => _TelaPrincipalState();
 }
@@ -17,7 +19,8 @@ class TelaPrincipal extends StatefulWidget {
 class _TelaPrincipalState extends State<TelaPrincipal> {
   List<String> itensMenu = ["Editar Perfil", "Deslogar"];
   List<Widget> widgetList = [];
-  DispositivoRepositorio dispositivoRepositorio = new DispositivoRepositorio();
+  DispositivoRepositorio dispositivoRepositorio = DispositivoRepositorio();
+  late Future<List> _future = dispositivoRepositorio.recuperarDispositivo(widget.id!);
 
   _escolhaMenuItem(String itemEscolhido) {
     switch (itemEscolhido) {
@@ -32,6 +35,21 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         return deslogarUsuario();
         break;
     }
+  }
+
+  setUpTimedFetch() {
+    Timer.periodic(Duration(milliseconds: 3000), (timer) {
+      setState(() {
+        _future = dispositivoRepositorio.recuperarDispositivo(widget.id!);
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setUpTimedFetch();
   }
 
   @override
@@ -60,7 +78,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           ],
         ),
         body: FutureBuilder<List<dynamic>>(
-          future: dispositivoRepositorio.recuperarDispositivo(widget.id!),
+          future: _future,
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               return ListView.builder(
@@ -106,8 +124,10 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
       direction: DismissDirection.endToStart,
       onDismissed: (e) {
         dispositivoRepositorio.Delete(tabela.id);
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => TelaPrincipal(id: widget.id)));
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => TelaPrincipal(widget.id)));
         sucesso(context, 'Dispositivo Apagado.');
       },
       background: Container(
@@ -135,19 +155,52 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           tabela.mac,
         ),
         trailing: IconButton(
-            icon: tabela.lock == 0 ? const Icon(Icons.lock_open) : const Icon(Icons.lock),
+            icon: tabela.lock == 0
+                ? const Icon(Icons.lock_open)
+                : const Icon(Icons.lock),
             onPressed: () {
-              if (tabela.lock == 1){
-            dispositivoRepositorio.Put(tabela.id, tabela.idCliente, tabela.nome, tabela.mac, 0);
-            Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => TelaPrincipal(id: widget.id)));
-            sucesso(context, 'Dispositivo Liberado.');
-          }else if (tabela.lock == 0){
-            dispositivoRepositorio.Put(tabela.id, tabela.idCliente, tabela.nome, tabela.mac, 1);
-            Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => TelaPrincipal(id: widget.id)));
-            sucesso(context, 'Dispositivo Fechado.');
-          }
+              if (tabela.lock == 1) {
+                ElevatedButton(
+                  onPressed: _showNotification,
+                  child: const Text('Exibir notificação'),
+                ),
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Abrir Válvula de Gás', style: TextStyle(color: Colors.red),),
+                      content: Text('1. Verifique se o vazamento foi totalmente eliminado: '
+                          'Antes de tentar abrir a válvula de gás novamente, é importante garantir que o vazamento tenha sido totalmente eliminado. '
+                          'Certifique-se de que não há mais odor de gás e de que o ambiente esteja bem ventilado.'
+                          '\n'
+                          '2. Após a abertura da válvula, verifique se há vazamentos novamente. Fique atento a qualquer odor de gás e certifique-se de'
+                          ' que a chama do fogão ou do aquecedor esteja azul, indicando que a queima do gás está adequada.',
+                          style: TextStyle(fontSize: 18),),
+                      actions: <Widget>[
+                        TextButton(
+                          style: TextButton.styleFrom(foregroundColor: Colors.red),
+                          child: Text('Cancelar', style: TextStyle(fontSize: 18),),
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Fecha o diálogo
+                          },
+                        ),
+                        TextButton(
+                          child: Text('OK', style: TextStyle(fontSize: 18),),
+                          onPressed: () {
+                            dispositivoRepositorio.Put(tabela.id, tabela.idCliente, tabela.nome, tabela.mac, 0);
+                            sucesso(context, 'Dispositivo Liberado.');
+                            Navigator.of(context).pop(); // Fecha o diálogo
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              } else if (tabela.lock == 0) {
+                dispositivoRepositorio.Put(
+                    tabela.id, tabela.idCliente, tabela.nome, tabela.mac, 1);
+                sucesso(context, 'Dispositivo Fechado.');
+              }
             }),
         onTap: () {
           Navigator.push(

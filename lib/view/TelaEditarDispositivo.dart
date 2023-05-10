@@ -65,7 +65,7 @@ class _TelaEditarDispositivoState extends State<TelaEditarDispositivo> {
                         DR.Put(widget.id, widget.idCliente, txtNome.text, txtMAC.text, 0);
                         sucesso(context, 'Dispositivo atualizado.');
                         Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => TelaPrincipal(id: widget.id)));
+                            MaterialPageRoute(builder: (context) => TelaPrincipal(widget.id)));
                       },
                     ),
                   ),

@@ -89,7 +89,7 @@ class _TelaLoginState extends State<TelaLogin> {
       final tokenSave = await SharedPreferences.getInstance();
       await tokenSave.setInt('aceite', c.id!);
       Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => TelaPrincipal(id: c.id)));
+          MaterialPageRoute(builder: (context) => TelaPrincipal(c.id)));
       sucesso(context, "Usuário autenticado");
     } else {
       erro(context, "Email e Senha inválidos.");
