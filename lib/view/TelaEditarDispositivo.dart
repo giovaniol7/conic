@@ -1,11 +1,9 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:conic/model/dispositivo.dart';
 import 'package:conic/repositorio/dispositivo_repositorio.dart';
-import 'package:conic/view/TelaPrincipal.dart';
 import 'package:conic/widgets/campoTexto.dart';
 import 'package:conic/widgets/mensagem.dart';
 import 'package:flutter/material.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class TelaEditarDispositivo extends StatefulWidget {
   final int? id;
@@ -33,6 +31,7 @@ class _TelaEditarDispositivoState extends State<TelaEditarDispositivo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.black),
         title: Text("Atualizar Dispositivo", style: TextStyle(color: Colors.black),),
         backgroundColor: Colors.grey.shade300,
       ),
@@ -57,27 +56,35 @@ class _TelaEditarDispositivoState extends State<TelaEditarDispositivo> {
                       style: OutlinedButton.styleFrom(
                         primary: Colors.white,
                         minimumSize: const Size(200, 45),
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.indigo,
+                        elevation: 5,
                       ),
-                      child: const Text('Atualizar'),
+                      child: const Text(
+                        'Editar',
+                        style: TextStyle(fontSize: 18),
+                      ),
                       onPressed: () {
                         DispositivoRepositorio DR = new DispositivoRepositorio();
                         DR.Put(widget.id, widget.idCliente, txtNome.text, txtMAC.text, 0);
                         sucesso(context, 'Dispositivo atualizado.');
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => TelaPrincipal(widget.id)));
+                        Navigator.pop(context);
                       },
                     ),
                   ),
+                  Padding(padding: EdgeInsets.only(right: 50)),
                   SizedBox(
                     width: 150,
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
                         primary: Colors.white,
                         minimumSize: const Size(200, 45),
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.red,
+                        elevation: 5,
                       ),
-                      child: const Text('Cancelar'),
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(fontSize: 18),
+                      ),
                       onPressed: () {
                         Navigator.pop(context);
                       },

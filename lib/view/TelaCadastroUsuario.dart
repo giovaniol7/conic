@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:conic/widgets/campoTexto.dart';
 import '../widgets/mensagem.dart';
-import 'package:http/http.dart' as http;
 
 class TelaCadastroUsuario extends StatefulWidget {
   const TelaCadastroUsuario({Key? key}) : super(key: key);
@@ -20,21 +19,56 @@ class _TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
   TextEditingController txtTelefone = TextEditingController();
   TextEditingController txtTelefoneSecundario = TextEditingController();
   TextEditingController txtSenhaCofirmar = TextEditingController();
+  bool _obscureText = true;
+  bool _obscureText2 = true;
+
+  @override
+  void _toggle() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
+  @override
+  void _toggle2() {
+    setState(() {
+      _obscureText2 = !_obscureText2;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    void verificarSenhas(){
-      if(txtSenha.text != txtSenhaCofirmar.text){
-        erro(context, 'Senhas não coincidem.');
-      }else{
-        ClienteRepositorio CR = new ClienteRepositorio();
-        CR.Post(txtNome.text, txtEmail.text, txtSenha.text, txtTelefone.text, txtTelefoneSecundario.text);
-        sucesso(context, 'Usuário cadastrado.');
+    void verificarSenhas() {
+      if (txtEmail.text.isNotEmpty &&
+          txtNome.text.isNotEmpty &&
+          txtTelefone.text.isNotEmpty &&
+          txtTelefoneSecundario.text.isNotEmpty
+      ) {
+        if (txtEmail.text.contains('@')) {
+          if (txtSenha.text != txtSenhaCofirmar.text) {
+            erro(context, 'Senhas não coincidem.');
+          } else {
+            if (txtSenha.text.length >= 4 || txtSenha.text.isEmpty){
+              ClienteRepositorio CR = new ClienteRepositorio();
+              CR.Post(txtNome.text, txtEmail.text, txtSenha.text,
+                  txtTelefone.text, txtTelefoneSecundario.text);
+              sucesso(context, 'Usuário atualizado.');
+              Navigator.pop(context);
+            }else{
+              erro(context, 'Senha deve possuir mais de 4 caracteres.');
+            }
+          }
+        }else{
+          erro(context, 'Formato de e-mail inválido.');
+        }
+      } else {
+        erro(context, 'Preencha corretamente todos os campos.');
       }
     }
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.black),
         title: Text("Cadastro", style: TextStyle(color: Colors.black),),
         backgroundColor: Colors.grey.shade300,
       ),
@@ -54,9 +88,25 @@ class _TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
                 const SizedBox(height: 20),
                 campoTexto('Telefone Secundário', txtTelefoneSecundario, Icons.phone, formato: TelefoneInputFormatter(), numeros: true),
                 const SizedBox(height: 20),
-                campoTexto('Senha', txtSenha, Icons.lock, senha: true),
+                campoTexto('Senha', txtSenha, Icons.lock,
+                    sufIcon: IconButton(
+                      icon: Icon(
+                        _obscureText ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.black,
+                      ),
+                      onPressed: _toggle,
+                    ),
+                    senha: _obscureText),
                 const SizedBox(height: 20),
-                campoTexto('Confirmar Senha', txtSenhaCofirmar, Icons.lock, senha: true),
+                campoTexto('Confirmar Senha', txtSenhaCofirmar, Icons.lock,
+                    sufIcon: IconButton(
+                      icon: Icon(
+                        _obscureText2 ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.black,
+                      ),
+                      onPressed: _toggle2,
+                    ),
+                    senha: _obscureText2),
                 const SizedBox(height: 40),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

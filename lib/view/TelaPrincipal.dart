@@ -4,23 +4,60 @@ import 'package:conic/model/dispositivo.dart';
 import 'package:conic/repositorio/dispositivo_repositorio.dart';
 import 'package:conic/view/TelaCadastroDispositivo.dart';
 import 'package:conic/view/TelaEditarDispositivo.dart';
+import 'package:conic/view/TelaLogin.dart';
 import 'package:conic/view/TelaPerfil.dart';
 import 'package:flutter/material.dart';
 import 'package:conic/widgets/mensagem.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TelaPrincipal extends StatefulWidget {
-  final int? id;
-  const TelaPrincipal( this.id, {Key? key,}) : super(key: key);
+  final int? idCliente;
+  const TelaPrincipal( this.idCliente, {Key? key,}) : super(key: key);
   @override
   State<TelaPrincipal> createState() => _TelaPrincipalState();
 }
 
 class _TelaPrincipalState extends State<TelaPrincipal> {
+  bool flag = false;
   List<String> itensMenu = ["Editar Perfil", "Deslogar"];
   List<Widget> widgetList = [];
   DispositivoRepositorio dispositivoRepositorio = DispositivoRepositorio();
-  late Future<List> _future = dispositivoRepositorio.recuperarDispositivo(widget.id!);
+  late Future<List> _future = dispositivoRepositorio.recuperarDispositivo(widget.idCliente!);
+
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  late NotificationDetails platformChannelSpecifics;
+  late Future<bool> futureInitializeNotificationsChannel;
+
+  Future<bool> initializeNotificationsChannel() async {
+    try {
+      flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+      const androidInitializationSettings = AndroidInitializationSettings('app_icon');
+      const initializationSettings = InitializationSettings(android: androidInitializationSettings);
+
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+      const androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        '3228c0e595837fb18f48472a6eed17fd',
+        'LeakBlocker_Notification',
+        importance: Importance.max,
+        priority: Priority.high,
+        largeIcon: const DrawableResourceAndroidBitmap('app_icon'),
+      );
+      platformChannelSpecifics = const NotificationDetails(android: androidPlatformChannelSpecifics);
+      return true;
+    } catch (error) {
+      onErrorWhenInitializingNotificationsChannel();
+      return false;
+    }
+  }
+
+  var notificationsChannelInitializationError = '';
+
+  void onErrorWhenInitializingNotificationsChannel() {
+    notificationsChannelInitializationError = 'Não foi possível inicializar o canal de notificações';
+  }
 
   _escolhaMenuItem(String itemEscolhido) {
     switch (itemEscolhido) {
@@ -28,7 +65,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         return Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => TelaPerfil(id: widget.id),
+              builder: (context) => TelaPerfil(id: widget.idCliente),
             ));
         break;
       case "Deslogar":
@@ -40,7 +77,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
   setUpTimedFetch() {
     Timer.periodic(Duration(milliseconds: 3000), (timer) {
       setState(() {
-        _future = dispositivoRepositorio.recuperarDispositivo(widget.id!);
+        _future = dispositivoRepositorio.recuperarDispositivo(widget.idCliente!);
       });
     });
   }
@@ -50,16 +87,28 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
     // TODO: implement initState
     super.initState();
     setUpTimedFetch();
+    futureInitializeNotificationsChannel = initializeNotificationsChannel();
+  }
+
+  Future<void> showNotification() {
+    return flutterLocalNotificationsPlugin.show(
+      0,
+      'Vazamento de Gás',
+      'O sensor detectou um vazamento de gás.',
+      platformChannelSpecifics,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 200,
       constraints: BoxConstraints.expand(),
       decoration: BoxDecoration(color: Colors.grey.shade100),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.black),
           title: Text("Dispositivos"),
           foregroundColor: Colors.black,
           backgroundColor: Colors.grey.shade300,
@@ -97,14 +146,14 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           },
         ),
         floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.black,
+          backgroundColor: Colors.indigo,
+          foregroundColor: Colors.white,
           child: const Icon(Icons.add),
           onPressed: () {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => TelaCadastroDispositivo(id: widget.id),
+                  builder: (context) => TelaCadastroDispositivo(id: widget.idCliente),
                 ));
           },
         ),
@@ -112,13 +161,13 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
     );
   }
 
-  void deslogarUsuario() async {
-    sucesso(context, 'O usuário deslogado!');
-    saveValor();
-    Navigator.pushReplacementNamed(context, '/login');
-  }
-
   Widget dismiss(tabela) {
+    if(flag == false){
+      if(tabela.lock == 1){
+          showNotification();
+          flag = true;
+        }
+    }
     return Dismissible(
       key: Key(DateTime.now().microsecondsSinceEpoch.toString()),
       direction: DismissDirection.endToStart,
@@ -127,7 +176,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => TelaPrincipal(widget.id)));
+                builder: (context) => TelaPrincipal(widget.idCliente)));
         sucesso(context, 'Dispositivo Apagado.');
       },
       background: Container(
@@ -145,7 +194,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
       ),
       child: ListTile(
         leading: const CircleAvatar(
-          backgroundImage: AssetImage("lib/imagens/dispositivo.png"),
+          backgroundImage: AssetImage("lib/imagens/icon.png"),
         ),
         title: Text(
           tabela.nome,
@@ -160,10 +209,6 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                 : const Icon(Icons.lock),
             onPressed: () {
               if (tabela.lock == 1) {
-                ElevatedButton(
-                  onPressed: _showNotification,
-                  child: const Text('Exibir notificação'),
-                ),
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -181,7 +226,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                           style: TextButton.styleFrom(foregroundColor: Colors.red),
                           child: Text('Cancelar', style: TextStyle(fontSize: 18),),
                           onPressed: () {
-                            Navigator.of(context).pop(); // Fecha o diálogo
+                            Navigator.of(context).pop();// Fecha o diálogo
                           },
                         ),
                         TextButton(
@@ -189,6 +234,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                           onPressed: () {
                             dispositivoRepositorio.Put(tabela.id, tabela.idCliente, tabela.nome, tabela.mac, 0);
                             sucesso(context, 'Dispositivo Liberado.');
+                            flag = true;
                             Navigator.of(context).pop(); // Fecha o diálogo
                           },
                         ),
@@ -197,8 +243,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                   },
                 );
               } else if (tabela.lock == 0) {
-                dispositivoRepositorio.Put(
-                    tabela.id, tabela.idCliente, tabela.nome, tabela.mac, 1);
+                dispositivoRepositorio.Put(tabela.id, tabela.idCliente, tabela.nome, tabela.mac, 1);
                 sucesso(context, 'Dispositivo Fechado.');
               }
             }),
@@ -207,11 +252,21 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
               context,
               MaterialPageRoute(
                 builder: (context) => TelaEditarDispositivo(
-                    id: widget.id, macc: tabela.mac, idCliente: widget.id),
+                    id: tabela.id, macc: tabela.mac, idCliente: widget.idCliente),
               ));
         },
       ),
     );
+  }
+
+  void deslogarUsuario() async {
+    sucesso(context, 'O usuário deslogado!');
+    saveValor();
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TelaLogin(),
+        ));
   }
 
   void saveValor() async {

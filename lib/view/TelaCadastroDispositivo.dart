@@ -24,6 +24,7 @@ class _TelaCadastroDispositivoState extends State<TelaCadastroDispositivo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.black),
         title: Text("Cadastro de Dispositivo", style: TextStyle(color: Colors.black),),
         backgroundColor: Colors.grey.shade300,
       ),
@@ -48,27 +49,36 @@ class _TelaCadastroDispositivoState extends State<TelaCadastroDispositivo> {
                       style: OutlinedButton.styleFrom(
                         primary: Colors.white,
                         minimumSize: const Size(200, 45),
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.indigo,
+                        elevation: 5,
                       ),
-                      child: const Text('Criar'),
+                      child: const Text(
+                        'Criar',
+                        style: TextStyle(fontSize: 18),
+                      ),
                       onPressed: () {
                         DispositivoRepositorio DR = new DispositivoRepositorio();
                         DR.Post(widget.id, txtNome.text, txtMAC.text);
-                        sucesso(context, 'Usuário cadastrado.');
+                        sucesso(context, 'Dispositivo cadastrado.');
                         Navigator.pushReplacement(context,
                             MaterialPageRoute(builder: (context) => TelaPrincipal(widget.id)));
                       },
                     ),
                   ),
+                  Padding(padding: EdgeInsets.only(right: 50)),
                   SizedBox(
                     width: 150,
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
                         primary: Colors.white,
                         minimumSize: const Size(200, 45),
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.red,
+                        elevation: 5,
                       ),
-                      child: const Text('Cancelar'),
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(fontSize: 18),
+                      ),
                       onPressed: () {
                         Navigator.pop(context);
                       },

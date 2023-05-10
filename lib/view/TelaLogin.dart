@@ -17,6 +17,14 @@ class _TelaLoginState extends State<TelaLogin> {
   TextEditingController txtEmail = TextEditingController();
   TextEditingController txtSenha = TextEditingController();
   var id;
+  bool _obscureText = true;
+
+  @override
+  void _toggle() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +54,22 @@ class _TelaLoginState extends State<TelaLogin> {
                   padding: EdgeInsets.only(bottom: 15),
                   child: campoTexto('Email', txtEmail, Icons.email),
                 ),
-                campoTexto('Senha', txtSenha, Icons.lock, senha: true),
+                campoTexto('Senha', txtSenha, Icons.lock, sufIcon: IconButton(
+                  icon: Icon(
+                    _obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.black,
+                  ),
+                  onPressed: _toggle,
+                ),
+                    senha: _obscureText),
                 Padding(
                   padding: EdgeInsets.only(top: 16, bottom: 10),
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.indigo,
+                      foregroundColor: Colors.white,
+                      elevation: 5
+                    ),
                     child: Text(
                       "Entrar",
                       style: TextStyle(color: Colors.white, fontSize: 20),
@@ -63,7 +83,7 @@ class _TelaLoginState extends State<TelaLogin> {
                   child: GestureDetector(
                     child: Text(
                       "Não tem conta? Cadastre-se!",
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
                     ),
                     onTap: () {
                       Navigator.push(
